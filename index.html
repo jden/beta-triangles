@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BETA TRIANGLES</title>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        background: #41b6e5;
+      }
+      #triangle{ display: none; }
+      .triangle {
+        text-align: left;
+        position: relative;
+        width: 320px;
+        height: 240px;
+        overflow: hidden;
+        display: inline-block;
+      }
+      .triangle video {
+        width: 320px;
+        height: 240px;
+        z-index: 0;
+        position: absolute;
+      }
+      .triangle .mask{
+        width: 0;
+        height: 0;
+        border-left: 160px solid #41b6e5;
+        border-right: 160px solid #41b6e5;
+        z-index: 999;
+        position: absolute;
+      }
+      .triangle.up .mask{
+        border-bottom: 240px solid transparent;
+      }
+      .triangle.down .mask{
+        border-top: 240px solid transparent;
+      }
+      #wall {
+        text-align:center;
+      }
+      .char{    
+        position: absolute;
+        z-index: 9999;
+        font-family: helvetica,arial,sans-serif;
+        font-size: 240px;
+        color: #fff;
+        text-align: center;
+        width: 100%;
+        line-height: 240px;
+        text-shadow: 2px 2px 2px #399fd3;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="triangle">
+      <div class="triangle">
+        <video autoplay="true" class="vid"></video>
+        <div class="mask"></div>
+        <div class="char">B</div>
+      </div>
+    </div>
+    <div id="wall"></div>
+    <script>
+      navigator.webkitGetUserMedia({video: true}, function (stream) {
+        var src = window.URL.createObjectURL(stream)
+
+        var template = document.getElementById('triangle').innerHTML
+
+        if (!window.location.hash) {
+          window.location.hash = 'BETA'
+        } else {
+          var message = draw(window.location.hash)
+        }
+        window.addEventListener('hashchange', function () {
+          console.log('wtf', window.location.hash)
+          draw(window.location.hash)
+        })
+
+      
+        function draw(message) {
+          message = message || 'BETA'
+          message = message.toUpperCase().replace(/[^\w]/g,'')
+          document.getElementById('wall').innerHTML = ''
+          
+          for (var i = 0; i < 50; i++) {
+            var next = document.createElement('div')
+            next.innerHTML = template
+            next.classList.add('triangle')
+            next.classList.add(i % 2 ? 'up' : 'down')
+            document.getElementById('wall').appendChild(next)
+            next.querySelector('video').src = src
+            next.querySelector('.char').textContent = message[i % message.length]
+          }
+
+        }
+
+      }, console.error.bind(console))
+
+      
+    </script>
+  </body>
+</html>
